@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <!--IMPORT script &style & BOOTSTRAP-->
+        <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+        <script src="./node_modules/axios/dist/axios.min.js"></script>
+    
+    <style>
+        body{
+            background-color: antiquewhite;
+        }
+        #add-btn{
+          position: fixed;
+          bottom: 5%;
+          right:7%;
+          height: 70px;
+          width:70px;
+          font-size: 50px;
+          color:white;
+          border-radius: 100px;
+          text-align: center;
+          cursor: pointer;
+          box-shadow: 0px 10px 10px rgba(0, 0,0,0.3);
+    
+    
+        }
+    </style>
+</head>
+
+<body>
+    <!--====MODELS=====-->
+    <!--===MODEL LOGIN-->
+    <div class="modal fade" id="login-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">Login</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form>
+                <div class="mb-3">
+                  <label for="recipient-name" class="col-form-label">Username:</label>
+                  <input type="text" class="form-control" id="username-input" value="slman2009">
+                </div>
+                <div class="mb-3">
+                  <label for="message-text" class="col-form-label">Password:</label>
+                  <input type="password" class="form-control" id="password-input" value="123456">
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="loginBtnClicked()">Login</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--// MODEL LOGIN//===-->
+      <!--===Register LOGIN-->
+      <div class="modal fade" id="Register-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">Register A new User</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form>
+                <div class="mb-3">
+                  <label for="recipient-name" class="col-form-label">Profile Image:</label>
+                  <input type="file" class="form-control" id="register-image-input">
+                </div>
+                <div class="mb-3">
+                  <label for="recipient-name" class="col-form-label">Name:</label>
+                  <input type="text" class="form-control" id="register-name-input" value="salmaan">
+                </div>
+                <div class="mb-3">
+                  <label for="recipient-name" class="col-form-label">Username:</label>
+                  <input type="text" class="form-control" id="register-username-input" value="slman2009">
+                </div>
+                <div class="mb-3">
+                  <label for="message-text" class="col-form-label">Password:</label>
+                  <input type="password" class="form-control" id="register-password-input" value="123456">
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="RegisterBtnClicked()">Register</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--// Register LOGIN//===-->
+      
+      <!--=========ALERT=======-->
+    <div id="success-alert" class="show fade" style="position:fixed; z-index:999999; width:30%; bottom:0; right:0;"></div>
+    <!--=========// ALERT //=======-->
+
+
+    <!--====//MODELS//=====-->
+
+ <!--======Loader======-->
+ <div id="loader" style="background:rgba(128, 128, 128, 0.368);position:fixed; top:0px; bottom:0px; left:0px; right:0px;margin: auto auto; display:flex;justify-content:center; align-items:center; z-index:9999; width:80px;height:80px; border-radius:40px;">
+  <div class="lds-roller">
+    <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+  </div></div>
+    <!--====== //Loader //======-->
+    <!--NAVIGATION BAR CONTAINER-->
+  <div class="container pt-1">
+    <div class="d-flex justify-content-center">
+      <div class="col-10">
+         <nav class="navbar navbar-expand-lg bg-body-tertiary shadow rounded pt-3">
+            <div class="container-fluid">
+              <a class="navbar-brand" href="home.html">Tarmeez</a>
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                  <a class="nav-link active" aria-current="page" href="home.html">Home</a>
+                  <a class="nav-link" onclick="profileClicked()" style="cursor: pointer;">Profile</a>                  </div>          
+                  <!--non logged in user-->
+                  <div class="d-flex justify-content-end" style="width:100%; height:100%;" id="loggedin-div">
+                        <button id="login-btn" type="button" class="btn btn-outline-success mx-2" data-bs-toggle="modal" data-bs-target="#login-modal">Login</button>
+                        <button id="register-btn" type="button" data-bs-toggle="modal" data-bs-target="#Register-modal" class="btn btn-outline-success">Register</button>
+                  </div>
+                  <!--//non logged in user //-->
+                  <!--logged in user -->   
+                  <div class="d-flex justify-content-end align-items-center" style="width:100%; height:100%;" id="logout-div">
+                    <img id="nav-user-image" src="./profile-pics/2.jpeg" alt="" width="20%"height="20%"class="rounded-circle justify-content-end">
+                    <b id="nav-username">
+                      @lamia
+                    </b>
+                    <button id="logout-btn" onclick="logout()" type="button" class="btn btn-outline-danger mx-2" data-bs-toggle="modal">Logout</button>
+              </div>
+                  <!--//logged in user //-->
+            </div>
+        </div>
+      </nav>
+    </div>
+    </div>
+  </div>
+
+      <!--//NAVIGATION BAR CONTAINER//-->
+      <!--MAIN CONTENT-->
+    <div class="container pt-2">
+      <!--User's POST-->
+       <div class="d-flex-justify-content-center mt-4">
+          <div class="col-10">
+              <h1>
+                <span id="username-spane">
+                  lamia's
+                </span>
+                post
+              </h1>
+          </div>
+        </div>
+       
+        <!--  post  Row-->
+          <!--POST-->
+          <div class="d-flex-justify-content-center mt-4">
+            <div class="col-10" id="post">
+              <!--Post Card-->
+            <div class="card shadow my-2">
+              <div class="card-header">
+                <img src="./profile-pics/1.jpeg" alt="" style="width: 40px; height: 40px;" class="rounded-circle border border-2">
+                <b>
+                  @Lamia_Ashour
+                </b>
+              </div>
+            <div class="card-body">
+              <img src="./placeholders/1.jpeg" alt="" style="width: 100%; height: 100px;">
+              <p style="color: gray;" class="mt-1">2 mins ago</p>
+              <h5>
+                helllo world
+              </h5>
+              <p>
+                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Blanditiis perspiciatis temporibus, libero consectetur, voluptatum autem harum quisquam ullam praesentium molestiae, sit odio illo optio sint non officia? Fugiat, hic fuga?
+              </p>
+              <hr>
+              <div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
+                  <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"/>
+                </svg>
+                <span>
+                  (3) comments
+                </span>
+              </div>
+
+            </div>
+            <!--Comments-->
+            <div id="comments">
+              <!--Comment-->
+              <div class="p-3 " style="background-color: rgb(255, 255, 255);">
+                  <!--Profile picture  +username -->
+                  <div>
+                    <img src="./profile-pics/1.jpeg" class="rounded-circle" alt="" style="width: 40px; height:40px;">
+                    <b>@asma</b>
+                  </div>
+                  <!-- //Profile picture  +username  //-->
+                  <!--comment body-->
+                  <div>
+                    Lorem ipsum, dolor sit amet consectetur adipisicing elit. Commodi excepturi laboriosam quae ab necessitatibus sed omnis ducimus magnam? Perspiciatis, harum perferendis non ex placeat doloremque quidem vero sequi consequuntur inventore?
+                  </div>
+                  <!--// comment body //-->
+
+              </div>
+              <!--// comment //-->
+               <!--Comment-->
+               <div class="p-3 " style="background-color: rgb(255, 255, 255);">
+                <!--Profile picture  +username -->
+                <div>
+                  <img src="./profile-pics/1.jpeg" class="rounded-circle" alt="" style="width: 40px; height:40px;">
+                  <b>@asma</b>
+                </div>
+                <!-- //Profile picture  +username  //-->
+                <!--comment body-->
+                <div>
+                  Lorem ipsum, dolor sit amet consectetur adipisicing elit. Commodi excepturi laboriosam quae ab necessitatibus sed omnis ducimus magnam? Perspiciatis, harum perferendis non ex placeat doloremque quidem vero sequi consequuntur inventore?
+                </div>
+                <!--// comment body //-->
+
+            </div>
+            <!--// comment //-->
+             <!--Comment-->
+             <div class="p-3 " style="background-color: rgb(255, 255, 255);">
+              <!--Profile picture  +username -->
+              <div>
+                <img src="./profile-pics/1.jpeg" class="rounded-circle" alt="" style="width: 40px; height:40px;">
+                <b>@asma</b>
+              </div>
+              <!-- //Profile picture  +username  //-->
+              <!--comment body-->
+              <div>
+                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Commodi excepturi laboriosam quae ab necessitatibus sed omnis ducimus magnam? Perspiciatis, harum perferendis non ex placeat doloremque quidem vero sequi consequuntur inventore?
+              </div>
+              <!--// comment body //-->
+
+          </div>
+          <!--// comment //-->
+            </div>
+            <!-- // Comments //-->
+        </div>
+          <!--//---Post Card //-->
+
+        </div>
+        </div>
+         <!-- //POST //-->
+          <!-- // Post Row  //-->
+    </div>
+  
+</body>
+<script src="./mainlogic.js"></script>
+<script>
+  const urlParams=new URLSearchParams(window.location.search)
+  const id=urlParams.get("postId")  
+  setupUI()
+  getpost
+  function getpost(){
+    axios.get(`${baseUrl}/posts/${id}`)
+    .then((response)=>{
+     const post=response.data.data
+     const comments=post.comments
+     const author=post.author
+     document.getElementById("username-spane").innerHTML=author.username
+
+     let postTitle=""
+      if (post.title !=null)
+      {
+        postTitle=post.title
+      }
+      let commentsContent=``
+      for (comment of comments)
+      {
+        commentsContent +=
+        `
+         <!--Comment-->
+              <div class="p-3 " style="background-color: rgb(255, 255, 255);">
+                  <!--Profile picture  +username -->
+                  <div>
+                    <img src="${comment.author.profile_image}" class="rounded-circle" alt="" style="width: 40px; height:40px;">
+                    <b>${comment.author.username}</b>
+                  </div>
+                  <!-- //Profile picture  +username  //-->
+                  <!--comment body-->
+                  <div>
+                    ${comment.body}
+                  </div>
+                  <!--// comment body //-->
+
+              </div>
+              <!--// comment //-->
+        `
+      }
+     const postContent=`
+            <div class="card shadow my-2">
+                <div class="card-header">
+                  <img src="${author.profile_image}" alt="" style="width: 40px; height: 40px;" class="rounded-circle border border-2">
+                  <b>
+                    @${author.username}
+                  </b>
+                </div>
+              <div class="card-body">
+                <img src="${post.image}" alt="" style="width: 100%; height: 100px;">
+                <p style="color: gray;" class="mt-1">${post.created_at}</p>
+                <h5>
+                  ${postTitle}
+                </h5>
+                <p>
+                  ${post.body}
+                </p>
+                <hr>
+                <div>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
+                    <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"/>
+                  </svg>
+                  <span>
+                    (${post.comments_count}) comments
+                  </span>
+                </div>
+              </div>
+              <div id="comments">
+                ${commentsContent}
+              </div>
+              <div class="input-group mb-3" id="add-commment-div">
+                <input id="comment-input" type="text" placeholder="add your comment here...." class="form-control">
+                <button class="btn btn-outline-primary" type="button" onclick="createCommentClicked()">send</button>
+              </div>
+
+        </div> 
+        `
+    document.getElementById("post").innerHTML=postContent
+ 
+   })
+
+    }
+    function createCommentClicked()
+    {
+        let commentBody=document.getElementById("comment-input").value
+        alert("commentBody")
+        let params={
+          "body" :commentBody
+        }
+        let token=localStorage.getItem("token")
+        let url=`${baseUrl}/posts/${id}/comments`
+        axios.post(url,params,{
+          headers:
+          {
+          "authorization":`Bearer ${token}`
+          }
+        })
+        .then((response)=>{
+          console.log(response.data)
+          showAlert("The Comment has been created successfully","success")
+          getpost()
+        }).catch((error)=>{
+          const errorMessage=error.response.data.message
+          showAlert(errorMessage,"danger")
+          
+        })
+    }
+    
+</script>
+</html>
